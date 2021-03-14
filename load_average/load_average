@@ -17,11 +17,26 @@
 load="$(cut -d ' ' -f1 /proc/loadavg)"
 cpus="$(nproc)"
 
-# full text
-echo "$load"
+SHOW=0
+case $BLOCK_BUTTON in
+  1) SHOW=1 ;; # show
+  3) echo -n "$IPADDR" | mclip & ;;
+esac
 
-# short text
-echo "$load"
+#------------------------------------------------------------------------
+
+if [ "$SHOW" = "0" ]; then
+	echo "LD"
+	echo "LD"
+else
+	# full text
+	echo "$load"
+	# short text
+	echo "$load"
+
+	# Turn off the display after a while
+	nohup bash -c 'sleep 10; pkill -SIGRTMIN+10 i3blocks' >/dev/null 2>&1 &
+fi
 
 # color if load is too high
 awk -v cpus=$cpus -v cpuload=$load '
