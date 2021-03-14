@@ -58,32 +58,51 @@ if [[ "$IF" = "" ]] || [[ "$(cat /sys/class/net/$IF/operstate)" = 'down' ]]; the
 fi
 
 # if no interface is found, use the first device with a global scope
-IPADDR=$(ip addr show $IF | perl -n -e "/$AF ([^ \/]+).* scope global/ && print \$1 and exit")
+#IPADDR=$(ip addr show $IF | perl -n -e "/$AF ([^ \/]+).* scope global/ && print \$1 and exit")
 
+#if [[ "${display_wifi_name}" == "1" ]];
+#then
+#  # try to guess the wifi name
+#  if command -v iw > /dev/null && iw $IF info > /dev/null 2>&1;
+#  then
+#    WIFI_NAME=$(iw $IF info | grep -Po '(?<=ssid ).*' | tr -d " \t\n\r")
+#
+#    if [[ $BLOCK_BUTTON -eq 1 ]];
+#    then
+#      message="$LABEL $WIFI_NAME ($IPADDR)"
+#    else
+#      message="$LABEL $WIFI_NAME"
+#    fi
+#  else
+#    message="$LABEL $IPADDR"
+#  fi
+#else
+#  message="$LABEL $IPADDR"
+#fi
+#
+##------------------------------------------------------------------------
+#
+#echo "$message"
+
+SHOW=0
 case $BLOCK_BUTTON in
-  3) echo -n "$IPADDR" | xclip -q -se c ;;
+  1) # show IP
+	IPADDR=$(ip addr show $IF | perl -n -e "/$AF ([^ \/]+).* scope global/ && print \$1 and exit")
+	SHOW=1
+	;;
+  3) # copy IP
+	IPADDR=$(ip addr show $IF | perl -n -e "/$AF ([^ \/]+).* scope global/ && print \$1 and exit")
+	echo -n "$IPADDR" | mclip &
+	;;
 esac
 
-if [[ "${display_wifi_name}" == "1" ]];
-then
-  # try to guess the wifi name
-  if command -v iw > /dev/null && iw $IF info > /dev/null 2>&1;
-  then
-    WIFI_NAME=$(iw $IF info | grep -Po '(?<=ssid ).*' | tr -d " \t\n\r")
-
-    if [[ $BLOCK_BUTTON -eq 1 ]];
-    then
-      message="$LABEL $WIFI_NAME ($IPADDR)"
-    else
-      message="$LABEL $WIFI_NAME"
-    fi
-  else
-    message="$LABEL $IPADDR"
-  fi
+if [ "$SHOW" = "0" ]; then
+	echo "IP"
+	echo "IP"
 else
-  message="$LABEL $IPADDR"
+	echo "$LABEL$IPADDR" # full text
+	echo "$LABEL$IPADDR" # short text
+
+	# Turn off the display after a while
+	nohup bash -c 'sleep 5; pkill -SIGRTMIN+10 i3blocks' >/dev/null 2>&1 &
 fi
-
-#------------------------------------------------------------------------
-
-echo "$message"
