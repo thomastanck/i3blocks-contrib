@@ -45,5 +45,5 @@ if (system("pgrep -x mpv 2>&1 1>/dev/null") == 0) {
 }
 
 binmode(STDOUT, ":utf8");
-print("<span color='$color'>\x{f16a}</span>\n");
-print("<span color='$color'>\x{f16a}</span>\n");
+print("<span color='$color'>\x{25ba}</span>\n");
+print("<span color='$color'>\x{25ba}</span>\n");
