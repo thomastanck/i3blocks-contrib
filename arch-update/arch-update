@@ -126,6 +126,15 @@ def matching_updates(updates, watch_list):
     return matches
 
 
+def open_update_in_terminal():
+    check_output(['i3-sensible-terminal', '-e',
+        'bash -c \'bash --rcfile <(echo ". ~/.bashrc ; set -x ; sudo pacman -Syu ; set +x")\''])
+
+
+block_button = os.environ.get("BLOCK_BUTTON","")
+if block_button == '1':
+    open_update_in_terminal()
+
 label = os.environ.get("LABEL","")
 message = "{0}<span color='{1}'>{2}</span>"
 args = create_argparse()
@@ -138,12 +147,8 @@ elif args.aur_yay:
 
 update_count = len(updates)
 if update_count > 0:
-    if update_count == 1:
-      info = str(update_count) + ' update available'
-      short_info = str(update_count) + ' update'
-    else:
-      info = str(update_count) + ' updates available'
-      short_info = str(update_count) + ' updates'
+    info = '↓' + str(update_count)
+    short_info = info
 
     matches = matching_updates(updates, args.watch)
     if matches:
