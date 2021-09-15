@@ -26,7 +26,7 @@ if ($uriValidator->is_web_uri($string) or $BLOCK_BUTTON == 3) {
     if ($BLOCK_BUTTON == 1) {
         $i3cmd = "exec mpv --ytdl --tls-verify '$string' && $notify_i3bar";
     } elsif ($BLOCK_BUTTON == 2) {
-        $i3cmd = "exec mpv --ytdl --tls-verify --ytdl-format=bestaudio '$string' && $notify_i3bar";
+        $i3cmd = "exec i3-sensible-terminal -e \"mpv --ytdl --tls-verify --ytdl-format=bestaudio '$string'\" && $notify_i3bar";
     } elsif ($BLOCK_BUTTON == 3) {
         $i3cmd = "exec killall -u $USER mpv && $notify_i3bar";
     }
